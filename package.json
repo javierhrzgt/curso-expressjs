@@ -1,0 +1,21 @@
+{
+  "name": "curso-expressjs",
+  "version": "1.0.0",
+  "description": "curso express.js",
+  "main": "app.js",
+  "scripts": {
+    "dev":"node --watch app.js",
+    "start":"node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "expressjs"
+  ],
+  "author": "Abraham Hernandez <javierhrzgt>",
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
+  }
+}
