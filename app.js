@@ -2,10 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 
-const fs = require('fs')
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 const { error } = require("console");
-const usersFilePath = path.join(__dirname,'users.json')
+const usersFilePath = path.join(__dirname, "users.json");
 
 const app = express();
 app.use(bodyParser.json());
@@ -64,15 +64,49 @@ app.post("/api/data", (req, res) => {
   });
 });
 
-app.get('/users',(req,res)=>{
-  fs.readFile(usersFilePath,'utf-8',(err,data)=>{
-    if(err){
-      return res.status(500).json({error:'Error con conexion de datos.'})
+app.get("/users", (req, res) => {
+  fs.readFile(usersFilePath, "utf-8", (err, data) => {
+    if (err) {
+      return res.status(500).json({ error: "Error con conexión de datos." });
     }
-    const users = JSON.parse(data)
-    res.json(users)
-  })
-})
+    const users = JSON.parse(data);
+    res.json(users);
+  });
+});
+
+app.post("/users", (req, res) => {
+  const newUser = req.body;
+
+  const name = newUser.name;
+  const email = newUser.email;
+
+  if (!name || name.length < 3) {
+    return res
+      .status(400)
+      .json({ error: "El nombre debe contener al menos 3 caracteres." });
+  }
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  if (!email || !emailRegex.test(email)) {
+    return res.status(400).json({ error: "El email ingresado es invalido." });
+  }
+
+  fs.readFile(usersFilePath, "utf-8", (err, data) => {
+    if (err) {
+      return res.status(500).json({ error: "Error con conexión de datos." });
+    }
+
+    const users = JSON.parse(data);
+    users.push(newUser);
+    fs.writeFile(usersFilePath, JSON.stringify(users, null, 2), (err) => {
+      if (err) {
+        return res.status(500).json({ error: "Error al guardar el usuario." });
+      }
+      res.status(201).json(newUser);
+    });
+  });
+});
 
 app.listen(PORT, () => {
   console.log(`Servidor: http://localhost:${PORT}`);
