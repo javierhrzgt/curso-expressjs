@@ -1,48 +1,48 @@
+import { AppError } from "#utils/error.util";
+
 const validateName = (name) => {
   if (!name || name.length < 3) {
-    return "El nombre debe contener al menos 3 caracteres.";
+    throw new AppError("El nombre debe contener al menos 3 caracteres.", 400);
   }
-  return null;
 };
 
 const validateEmail = (email) => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   if (!email || !emailRegex.test(email)) {
-    return "El correo ingresado es invalido.";
+    throw new AppError("El correo ingresado es invalido.", 400);
   }
-  return null;
 };
 
 const validateIdIsNumber = (id) => {
   if (typeof id !== "number" || isNaN(id)) {
-    return "El ID debe ser un numero valido.";
+    throw new AppError("El ID debe ser un numero valido.", 400);
   }
-  return null;
 };
 
 const validateIdExists = (id, users) => {
   if (users.find((user) => user.id === id)) {
-    return "El ID ya existe";
+    throw new AppError("El ID ya existe", 409);
   }
-  return null;
 };
 
 const validateEmailExists = (email, users) => {
   if (users.find((user) => user.email === email)) {
-    return "El email ya existe";
+    throw new AppError("El email ya existe", 409);
   }
-  return null;
 };
 
 const validateEmailExistsForOtherUser = (email, users, userId) => {
   if (users.find((user) => user.email === email && user.id !== userId)) {
-    return "El email esta en uso por otro usuario.";
+    throw new AppError("El email esta en uso por otro usuario.", 409);
   }
-  return null;
 };
 
 const findUserById = (userId, users) => {
-  return users.find((u) => u.id === userId) || null;
+  const user = users.find((u) => u.id === userId);
+  if (!user) {
+    throw new AppError("Usuario no encontrado", 404);
+  }
+  return user;
 };
 
 export {
