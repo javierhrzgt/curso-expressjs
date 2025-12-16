@@ -1,5 +1,5 @@
 import express from "express";
-import { readUsers, saveUsers } from "../utils/fileHandlers.js";
+import { readUsers, saveUsers } from "#utils/fileHandlers";
 import {
   validateName,
   validateEmail,
@@ -8,7 +8,7 @@ import {
   validateEmailExists,
   validateEmailExistsForOtherUser,
   findUserById,
-} from "../utils/validators.js";
+} from "#utils/validators";
 
 const router = express.Router();
 
@@ -151,4 +151,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-export default router;
+export {router as usersRouter};
