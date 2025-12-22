@@ -1,0 +1,19 @@
+{
+  "status": "commited",
+  "type": "backend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3001",
+  "backendAuthType": "basic token",
+  "backendUsername": "javier@jvha.com",
+  "backendPassword": "Pass1234",
+  "executionArgs": {
+    "projectName": "curso-expressjs",
+    "projectPath": "/media/javierhrzgt/16A0EB34A0EB194F/Platzi/node/curso-expressjs",
+    "testIds": [],
+    "additionalInstruction": "",
+    "envs": {
+      "API_KEY": "sk-user-QDz6BJAgUKPohpoadixNwjH2qDy_BjPONnmODuRu8t-7szr9UKya07Rwp1vcS0IrJYYp9Lh4ulvZx4qiLbGRi3HTDQgJqgSTgIN_EhqXvXXuGu6gewTpn7vtSPvC2Opt5OU"
+    }
+  },
+  "proxy": "http://76ea7665-9059-48a0-addf-b1d7ef2a9a8c:tT3ivo7cqZoLOxKZiouj6TFVQx1kZdDg@tun.testsprite.com:8080"
+}

@@ -1,0 +1,457 @@
+{
+  "tech_stack": ["JavaScript", "Express.js 5", "PostgreSQL", "Prisma ORM", "Zod", "JWT", "bcryptjs"],
+  "features": [
+    {
+      "name": "User Registration",
+      "description": "Register a new user with name, email, and password. Password is hashed with bcrypt. Users are assigned a role (USER or ADMIN).",
+      "files": [
+        "src/routes/auth.route.js",
+        "src/controllers/auth.controller.js",
+        "src/services/auth.service.js",
+        "src/utils/schemas/auth.schema.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "paths": {
+          "/api/v1/auth/register": {
+            "post": {
+              "summary": "Register a new user",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": ["name", "email", "password"],
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "minLength": 3,
+                          "description": "User's name"
+                        },
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "description": "User's email address"
+                        },
+                        "password": {
+                          "type": "string",
+                          "minLength": 6,
+                          "description": "User's password"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "201": {
+                  "description": "User registered successfully"
+                },
+                "400": {
+                  "description": "Validation error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "User Login",
+      "description": "Authenticate a user with email and password. Returns a JWT token on successful authentication.",
+      "files": [
+        "src/routes/auth.route.js",
+        "src/controllers/auth.controller.js",
+        "src/services/auth.service.js",
+        "src/utils/schemas/auth.schema.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "paths": {
+          "/api/v1/auth/login": {
+            "post": {
+              "summary": "Login user",
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": ["email", "password"],
+                      "properties": {
+                        "email": {
+                          "type": "string",
+                          "format": "email",
+                          "description": "User's email address"
+                        },
+                        "password": {
+                          "type": "string",
+                          "minLength": 1,
+                          "description": "User's password"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Login successful",
+                  "content": {
+                    "application/json": {
+                      "schema": {
+                        "type": "object",
+                        "properties": {
+                          "token": {
+                            "type": "string",
+                            "description": "JWT token"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "401": {
+                  "description": "Invalid credentials"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Protected Route",
+      "description": "Example protected route that requires JWT authentication.",
+      "files": [
+        "src/routes/auth.route.js",
+        "src/middlewares/auth.middleware.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "paths": {
+          "/api/v1/auth/protected-route": {
+            "get": {
+              "summary": "Access protected route",
+              "security": [{ "bearerAuth": [] }],
+              "responses": {
+                "200": {
+                  "description": "Access granted"
+                },
+                "401": {
+                  "description": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Create Time Blocks (Admin)",
+      "description": "Admin-only endpoint to create time blocks for appointments. Requires ADMIN role.",
+      "files": [
+        "src/routes/admin.route.js",
+        "src/controllers/admin.controller.js",
+        "src/services/admin.service.js",
+        "src/middlewares/authorize.middleware.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "paths": {
+          "/api/v1/admin/time-blocks": {
+            "post": {
+              "summary": "Create a time block",
+              "security": [{ "bearerAuth": [] }],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "required": ["startTime", "endTime"],
+                      "properties": {
+                        "startTime": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Start time of the block"
+                        },
+                        "endTime": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "End time of the block"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "201": {
+                  "description": "Time block created"
+                },
+                "403": {
+                  "description": "Access denied - Admin only"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "List Reservations (Admin)",
+      "description": "Admin-only endpoint to list all reservations/appointments in the system.",
+      "files": [
+        "src/routes/admin.route.js",
+        "src/controllers/admin.controller.js",
+        "src/services/admin.service.js",
+        "src/middlewares/authorize.middleware.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "paths": {
+          "/api/v1/admin/reservations": {
+            "get": {
+              "summary": "List all reservations",
+              "security": [{ "bearerAuth": [] }],
+              "responses": {
+                "200": {
+                  "description": "List of reservations"
+                },
+                "403": {
+                  "description": "Access denied - Admin only"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Create Reservation",
+      "description": "Create a new reservation/appointment for the authenticated user.",
+      "files": [
+        "src/routes/reservations.route.js",
+        "src/controllers/reservation.controller.js",
+        "src/services/reservation.service.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "paths": {
+          "/api/v1/reservations": {
+            "post": {
+              "summary": "Create a reservation",
+              "security": [{ "bearerAuth": [] }],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "date": {
+                          "type": "string",
+                          "format": "date-time",
+                          "description": "Reservation date"
+                        },
+                        "timeBlockId": {
+                          "type": "integer",
+                          "description": "ID of the time block"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "201": {
+                  "description": "Reservation created"
+                },
+                "401": {
+                  "description": "Unauthorized"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Get Reservation",
+      "description": "Get a specific reservation by ID. Users can only access their own reservations.",
+      "files": [
+        "src/routes/reservations.route.js",
+        "src/controllers/reservation.controller.js",
+        "src/services/reservation.service.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "paths": {
+          "/api/v1/reservations/{id}": {
+            "get": {
+              "summary": "Get a reservation by ID",
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": {
+                    "type": "integer"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "Reservation details"
+                },
+                "404": {
+                  "description": "Reservation not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Update Reservation",
+      "description": "Update an existing reservation. Users can only update their own reservations.",
+      "files": [
+        "src/routes/reservations.route.js",
+        "src/controllers/reservation.controller.js",
+        "src/services/reservation.service.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "paths": {
+          "/api/v1/reservations/{id}": {
+            "put": {
+              "summary": "Update a reservation",
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": {
+                    "type": "integer"
+                  }
+                }
+              ],
+              "requestBody": {
+                "required": true,
+                "content": {
+                  "application/json": {
+                    "schema": {
+                      "type": "object",
+                      "properties": {
+                        "date": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "timeBlockId": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "responses": {
+                "200": {
+                  "description": "Reservation updated"
+                },
+                "404": {
+                  "description": "Reservation not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Delete Reservation",
+      "description": "Delete a reservation. Users can only delete their own reservations.",
+      "files": [
+        "src/routes/reservations.route.js",
+        "src/controllers/reservation.controller.js",
+        "src/services/reservation.service.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "paths": {
+          "/api/v1/reservations/{id}": {
+            "delete": {
+              "summary": "Delete a reservation",
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": {
+                    "type": "integer"
+                  }
+                }
+              ],
+              "responses": {
+                "204": {
+                  "description": "Reservation deleted"
+                },
+                "404": {
+                  "description": "Reservation not found"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Get User Appointments",
+      "description": "Get all appointments for a specific user. Users can only view their own appointments unless they are an admin.",
+      "files": [
+        "src/routes/appointments.route.js",
+        "src/controllers/appointment.controller.js",
+        "src/services/appointment.service.js"
+      ],
+      "api_doc": {
+        "openapi": "3.0.0",
+        "paths": {
+          "/api/v1/users/{id}/appointments": {
+            "get": {
+              "summary": "Get user appointments",
+              "security": [{ "bearerAuth": [] }],
+              "parameters": [
+                {
+                  "name": "id",
+                  "in": "path",
+                  "required": true,
+                  "schema": {
+                    "type": "integer"
+                  },
+                  "description": "User ID"
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "List of user appointments"
+                },
+                "400": {
+                  "description": "Invalid user ID"
+                },
+                "403": {
+                  "description": "Access denied"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}
